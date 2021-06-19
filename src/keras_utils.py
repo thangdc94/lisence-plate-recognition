@@ -90,7 +90,7 @@ def reconstruct(Iorig,I,Y,out_size,threshold=.9):
 			H 		= find_T_matrix(ptsh,t_ptsh)
 			Ilp 	= cv2.warpPerspective(Iorig,H,out_size,borderValue=.0)
 
-			TLps.append(Ilp)
+			TLps.append((Ilp, ptsh[:2, :]))
 
 	return final_labels,TLps
 	
