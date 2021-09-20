@@ -8,7 +8,7 @@ from os.path import splitext
 from src.label import Label
 from src.utils import getWH, nms
 from src.projection_utils import getRectPts, find_T_matrix
-
+import tensorflow as tf
 
 class DLabel (Label):
 
@@ -94,6 +94,14 @@ def reconstruct(Iorig,I,Y,out_size,threshold=.9):
 
 	return final_labels,TLps
 	
+def memory_safe_predict(model, input_ndarray):
+	""" Predict that safe with memory leak.
+	Use it method instead of model.predict(input_ndarray).
+	Only used for tensor flow model
+	"""
+	input_tensor = tf.convert_to_tensor(input_ndarray)
+	output_tensor = model(input_tensor)
+	return output_tensor.numpy()
 
 def detect_lp(model,I,max_dim,net_step,out_size,threshold):
 
@@ -109,7 +117,7 @@ def detect_lp(model,I,max_dim,net_step,out_size,threshold):
 	T = T.reshape((1,T.shape[0],T.shape[1],T.shape[2]))
 
 	start 	= time.time()
-	Yr 		= model.predict(T)
+	Yr 		= memory_safe_predict(model, T)
 	Yr 		= np.squeeze(Yr)
 	elapsed = time.time() - start
 
