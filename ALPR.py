@@ -22,7 +22,7 @@ from tqdm import tqdm
 
 os.environ['DARKNET_PATH'] = os.getcwd() + "/darknetlib"
 import darknet.darknet as dn
-from darknet.darknet import detect_image
+from darknet.darknet import detect_image, free_image
 import pytesseract
 
 class ALPR:
@@ -95,6 +95,7 @@ class ALPR:
               dn.copy_image_from_bytes(darknet_image, image_resized.tobytes())
 
               R = detect_image(self.network, self.class_names, darknet_image, thresh=self.ocr_threshold, nms=None)
+              free_image(darknet_image)
             #   dim = Ilp.shape[:2]
               if len(R):
                   L = dknet_label_conversion(R, width, height)
